@@ -8,37 +8,36 @@ import java.util.Map;
 
 @Service
 public class GeminiService {
+
     private final WebClient webClient;
 
     @Value("${gemini.api.url}")
     private String geminiApiUrl;
 
     @Value("${gemini.api.key}")
-    private String geminiAPiKey;
+    private String geminiApiKey;
 
-    public GeminiService(WebClient webClientBuilder) {
-        this.webClient = webClientBuilder.mutate().build();
+    public GeminiService(WebClient webClient) {
+        this.webClient = webClient.mutate().build();
     }
 
-    public String getAnswer(String question)
-    {
-        //strcuture the request
-        Map<String,Object> requestBody=Map.of(
-                "contents",new Object[]{
-                        Map.of("parts",new Object[]
-                                {
-                                        Map.of("text",question)
-                                })
-                });
+    public String getAnswer(String question) {
+        Map<String, Object> requestBody = Map.of(
+                "contents", new Object[]{
+                        Map.of("parts", new Object[]{
+                                Map.of("text", question)
+                        })
+                }
+        );
 
-        String response=webClient.post()
-                .uri(geminiApiUrl+geminiAPiKey)
-                .header("Content-Type","application/json")
+        String response = webClient.post()
+                .uri(geminiApiUrl + geminiApiKey)
+                .header("Content-Type", "application/json")
                 .bodyValue(requestBody)
                 .retrieve()
                 .bodyToMono(String.class)
                 .block();
-        return response;
 
+        return response;
     }
 }
